@@ -1,9 +1,10 @@
 import json
+import pytest
 
 from pathlib import Path
 from models import StudyRecord
 
-from storage import load_records, save_records, reset_records
+from storage import load_records, save_records, reset_records, StorageError
 
 def test_load_records_returns_empty_list_when_file_does_not_exist(tmp_path: Path) -> None:
     file_path = tmp_path / "records.json"
@@ -82,3 +83,10 @@ def test_reset_records(tmp_path: Path, sample_records) -> None:
     data = load_records(file_path)
 
     assert data == []
+
+def test_load_records_raises_storage_error_for_invalid_json(tmp_path: Path,) -> None:
+    file_path = tmp_path / "records.json"
+    file_path.write_text("잘못된 JSON", encoding="utf-8")
+
+    with pytest.raises(StorageError):
+        load_records(file_path)
