@@ -5,11 +5,12 @@ import pytest
 
 import main
 
+
 def test_run_logs_error_and_exits_for_invalid_json(
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
-        caplog: pytest.LogCaptureFixture,
-        capsys: pytest.CaptureFixture[str],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     file_path = tmp_path / "records.json"
     file_path.write_text("잘못된 JSON", encoding="utf-8")

@@ -1,15 +1,13 @@
 import pytest
+
 from models import StudyRecord
+
 
 @pytest.fixture
 def sample_records() -> list[StudyRecord]:
     return [
         StudyRecord(
-            id=1,
-            subject="Python",
-            content="함수",
-            minutes=60,
-            date="2026-07-19"
+            id=1, subject="Python", content="함수", minutes=60, date="2026-07-19"
         ),
         StudyRecord(
             id=2,
@@ -19,11 +17,7 @@ def sample_records() -> list[StudyRecord]:
             date="2026-07-19",
         ),
         StudyRecord(
-            id=3,
-            subject="Python",
-            content="Coding Test",
-            minutes=60,
-            date="2026-07-19"
+            id=3, subject="Python", content="Coding Test", minutes=60, date="2026-07-19"
         ),
         StudyRecord(
             id=4,
