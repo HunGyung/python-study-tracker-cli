@@ -1,5 +1,12 @@
 from models import StudyRecord
-from services import generate_id, calculate_total_minutes, subject_search, delete_record, add_record
+from services import (
+    add_record,
+    calculate_total_minutes,
+    delete_record,
+    generate_id,
+    subject_search,
+)
+
 
 def test_generate_id_returns_one_when_records_are_empty() -> None:
     # Arrange: 테스트에 필요한 데이터 준비
@@ -11,15 +18,12 @@ def test_generate_id_returns_one_when_records_are_empty() -> None:
     # Assert: 결과 확인
     assert result == 1
 
+
 # generate_id가 최댓값에 1을 더하는지 확인
 def test_generate_id_returns_next_id() -> None:
     records = [
         StudyRecord(
-            id=1,
-            subject="Python",
-            content="함수",
-            minutes=60,
-            date="2026-07-19"
+            id=1, subject="Python", content="함수", minutes=60, date="2026-07-19"
         ),
         StudyRecord(
             id=3,
@@ -34,6 +38,7 @@ def test_generate_id_returns_next_id() -> None:
 
     assert result == 4
 
+
 # 빈 목록의 총 공부 시간은 0인지 확인
 def test_calculate_total_minutes_if_records_are_empty() -> None:
     records: list[StudyRecord] = []
@@ -42,15 +47,12 @@ def test_calculate_total_minutes_if_records_are_empty() -> None:
 
     assert result == 0
 
+
 # 60분과 30분 기록의 합계는 90이다.
 def test_calculate_total_minutes_60_and_30() -> None:
     records = [
         StudyRecord(
-            id=1,
-            subject="Python",
-            content="함수",
-            minutes=60,
-            date="2026-07-19"
+            id=1, subject="Python", content="함수", minutes=60, date="2026-07-19"
         ),
         StudyRecord(
             id=3,
@@ -65,12 +67,14 @@ def test_calculate_total_minutes_60_and_30() -> None:
 
     assert result == 90
 
+
 # Python 검색 시 Python 기록만 반환한다.
 def test_subject_search(sample_records: list[StudyRecord]) -> None:
     result = subject_search(sample_records, "Python")
 
     assert [record.id for record in result] == [1, 3]
     assert all(record.subject == "Python" for record in result)
+
 
 # 기록이 비어있을 때 과목 검샘을 하면 빈 목록을 반환한다.
 def test_subject_search_if_records_are_empty() -> None:
@@ -80,11 +84,13 @@ def test_subject_search_if_records_are_empty() -> None:
 
     assert not result
 
+
 # 없는 과목을 검색하면 빈 목록을 반환한다.
 def test_subject_search_if_non_exist_subject(sample_records: list[StudyRecord]) -> None:
     result = subject_search(sample_records, "Algorithm")
 
     assert not result
+
 
 # 존재하는 ID를 삭제하면 True를 반환하고 목록에서도 사라진다.
 def test_delete_record(sample_records: list[StudyRecord]) -> None:
@@ -94,6 +100,7 @@ def test_delete_record(sample_records: list[StudyRecord]) -> None:
     assert all(record.id != 1 for record in sample_records)
     assert len(sample_records) == 4
 
+
 # 존재하지 않는 ID를 삭제하면 False를 반환하며 목록은 변하지 않는다.
 def test_delete_record_nonexist_id(sample_records: list[StudyRecord]) -> None:
     original_records = sample_records.copy()
@@ -102,14 +109,15 @@ def test_delete_record_nonexist_id(sample_records: list[StudyRecord]) -> None:
     assert result is False
     assert sample_records == original_records
 
+
 # 기록 추가 후 목록 길이가 1이 되고 각 필드가 정확하다.
 def test_add_record() -> None:
     records: list[StudyRecord] = []
 
-    subject="Python"
-    content="함수"
-    minutes=60
-    date="2026-07-19"
+    subject = "Python"
+    content = "함수"
+    minutes = 60
+    date = "2026-07-19"
 
     add_record(records, subject, content, minutes, date)
 
@@ -120,19 +128,20 @@ def test_add_record() -> None:
     assert records[0].minutes == minutes
     assert records[0].date == date
 
+
 # 기록을 연속 추가하면 ID가 1과 2로 생성된다.
 def test_add_record_continuous() -> None:
     records: list[StudyRecord] = []
 
-    subject1="Python"
-    content1="함수"
-    minutes1=60
-    date1="2026-07-19"
+    subject1 = "Python"
+    content1 = "함수"
+    minutes1 = 60
+    date1 = "2026-07-19"
 
-    subject2="SQL"
-    content2="JOIN"
-    minutes2=30
-    date2="2026-07-19"
+    subject2 = "SQL"
+    content2 = "JOIN"
+    minutes2 = 30
+    date2 = "2026-07-19"
 
     add_record(records, subject1, content1, minutes1, date1)
     add_record(records, subject2, content2, minutes2, date2)
