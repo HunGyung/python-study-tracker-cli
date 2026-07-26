@@ -98,6 +98,7 @@ def run() -> None:
         else:
             if not records:
                 print("\n초기화할 기록이 없습니다.\n")
+                continue
 
             if reset_question() == 1:
                 records.clear()
