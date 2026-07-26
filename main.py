@@ -1,14 +1,37 @@
+import logging
+from pathlib import Path
+
 from models import StudyRecord
 from services import calculate_total_minutes, subject_search, delete_record, add_record
 from ui import list_records, menu, input_subject, subject_not_found, del_target_id, input_record, reset_question
-
-from pathlib import Path
-from storage import save_records, load_records, reset_records
+from storage import save_records, load_records, reset_records, StorageError
 
 DATA_FILE = Path(__file__).with_name("records.json")
+LOG_FILE = Path(__file__).with_name("app.log")
+
+logger = logging.getLogger(__name__)
+
+def configure_logging() -> None:
+    logging.basicConfig(
+        filename=LOG_FILE,
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+        encoding="utf-8",
+    )
 
 def run() -> None:
-    records = load_records(DATA_FILE)
+    try:
+        records = load_records(DATA_FILE)
+
+    except StorageError:
+        logger.exception(
+            "기록 파일을 불러오지 못했습니다. %s",
+            DATA_FILE,
+        )
+        print(
+            "기록 파일을 불러오는 중 오류가 발생했습니다.\n" \
+            "프로그램을 종료합니다.")
+        return
 
     while True:
         order = menu()
@@ -78,4 +101,5 @@ def run() -> None:
                 print("\n기록 초기화를 취소했습니다.\n")
 
 if __name__ == "__main__":
+    configure_logging()
     run()
