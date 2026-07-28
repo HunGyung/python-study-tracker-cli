@@ -17,5 +17,6 @@ files = [
     "services.py",
     "storage.py",
     "ui.py",
+    "sqlite_storage.py",
 ]
 strict = true
