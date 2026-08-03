@@ -14,8 +14,6 @@ python_version = "3.10"
 files = [
     "main.py",
     "models.py",
-    "services.py",
-    "storage.py",
     "ui.py",
     "sqlite_storage.py",
 ]

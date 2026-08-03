@@ -1,4 +1,5 @@
 import logging
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -6,16 +7,20 @@ import pytest
 import main
 
 
-def test_run_logs_error_and_exits_for_invalid_json(
+def test_run_logs_error_and_exits_when_database_initialization_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    file_path = tmp_path / "records.json"
-    file_path.write_text("잘못된 JSON", encoding="utf-8")
+    def raise_database_error(_: Path) -> None:
+        raise sqlite3.OperationalError("데이터베이스를 열 수 없습니다.")
 
-    monkeypatch.setattr(main, "DATA_FILE", file_path)
+    monkeypatch.setattr(
+        main,
+        "initialize_database",
+        raise_database_error,
+    )
 
     with caplog.at_level(logging.ERROR):
         main.run()
@@ -23,16 +28,18 @@ def test_run_logs_error_and_exits_for_invalid_json(
     captured = capsys.readouterr()
 
     assert "프로그램을 종료합니다." in captured.out
-    assert "기록 파일을 불러오지 못했습니다." in caplog.text
+    assert "데이터베이스 작업 중 오류가 발생했습니다." in caplog.text
 
 
 def test_run_skips_reset_question_when_records_are_empty(
+    tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
+    db_path = tmp_path / "test.db"
     menu_choices = iter([6, 0])
 
-    monkeypatch.setattr(main, "load_records", lambda _: [])
+    monkeypatch.setattr(main, "DB_FILE", db_path)
     monkeypatch.setattr(main, "menu", lambda: next(menu_choices))
 
     def fail_if_called() -> int:
